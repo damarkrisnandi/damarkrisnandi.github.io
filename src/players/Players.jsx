@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 // import { Container } from "react-pixi-fiber";
 
 const unit = 16;
-const width = window.screen.width;
-const height = window.screen.height;
+const width = window.innerWidth;
+const height = window.innerHeight;
 
 const standLeftFrames = [{x: 2, y: 2}]
 const walkLeftFrames = [

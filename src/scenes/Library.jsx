@@ -1,11 +1,11 @@
-import { Container, Sprite, useTick } from "@pixi/react";
+import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import room from '../json-helper/room.json'
 
 const unit = 16;
-const width = window.screen.width;
-const height = window.screen.height;
+const width = window.innerWidth;
+const height = window.innerHeight;
 const movement = {
     up: {x: 0, y: -1},
     left: {x: -1, y: 0}, 
@@ -16,10 +16,17 @@ const movement = {
     down0: {x: 0, y: 0}, 
     right0: {x: 0, y: 0},
 }
+
+const maxY = Math.max(...room.tiles.map(t => t.nowy + 1))
+const maxX = Math.max(...room.tiles.map(t => t.nowx + 1))
+const center = {x: Math.floor(width/(2*unit)) - Math.floor(maxX/2), y: height/(2*unit) - Math.floor(maxY/2)}
+
 function LibraryScene() {
     const [sprites, setSprites] = useState([])
+    const [colliders, setColliders] = useState([])
     const [key, setKey] = useState('down0');
     const containerRef = useRef();
+    const collidersRef = useRef();
 
     const blockBuilder = (url, unit, source, destination) => {
         const baseTexture = PIXI.BaseTexture.from(url)
@@ -29,8 +36,8 @@ function LibraryScene() {
             const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
             const texture1 = new PIXI.Texture(baseTexture, rect1);
             const spr1 = new PIXI.Sprite(texture1);
-            spr1.x = (destination.x + position.nowx - 2) * unit;
-            spr1.y = (destination.y + position.nowy - 2) * unit;
+            spr1.x = (destination.x + position.nowx) * unit;
+            spr1.y = (destination.y + position.nowy) * unit;
             // sprites.push(spr1)
             textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
             
@@ -40,13 +47,29 @@ function LibraryScene() {
     
     }
 
-    useEffect(() => {
-        blockBuilder(room.src, unit, room.tiles, {x: 0, y: 0})
-        console.log(containerRef);
-        if (containerRef.current) {
-            containerRef.current.x = width/2 - (6 * unit);
-            containerRef.current.y = height/2 - (4 * unit);
+    const colliderBuilder = (url, unit, source, destination) => {
+        const baseTexture = PIXI.BaseTexture.from(url)
+    
+        let textureTemp = [];
+        for (let position of source) {
+            const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
+            const texture1 = new PIXI.Texture(baseTexture, rect1);
+            const spr1 = new PIXI.Sprite(texture1);
+            spr1.x = (destination.x + position.nowx) * unit;
+            spr1.y = (destination.y + position.nowy) * unit;
+            // sprites.push(spr1)
+            textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
+            
         }
+
+        setColliders(textureTemp)
+    
+    }
+
+    useEffect(() => {
+        blockBuilder(room.src, unit, room.tiles, center)
+        colliderBuilder(room.src, unit, room.collider, center)
+        console.log(collidersRef)
     }, [])
 
     useTick((delta) => {
@@ -64,7 +87,7 @@ function LibraryScene() {
             if (event.key === 's') { setKey('down0'); }
         })
 
-        if (containerRef.current) {
+        if (containerRef.current && collidersRef.current) {
             containerRef.current.x -=  movement[key].x * delta;
             containerRef.current.y -=  movement[key].y * delta;
         }
@@ -72,15 +95,22 @@ function LibraryScene() {
         
     })
 
-    if (sprites.length === 0) {
-        return (<Container ref={containerRef}></Container>);
+    if (sprites.length !== room.tiles.length) {
+        return (<Container>
+            <Text text="load asset..." style={{'color': 'white'}}/>
+        </Container>);
     }
 
     return ( 
-        <Container ref={containerRef}>
+        <Container ref={containerRef} anchor={0.5}>
             {sprites.map(sprite => (
                 <Sprite {...sprite} />
             ))}
+            <Container ref={collidersRef} >
+                {colliders.map(coll => (
+                    <Sprite {...coll}/>
+                ))}
+            </Container>
         </Container>
     );
 }

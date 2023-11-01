@@ -20,7 +20,7 @@ function App() {
   
   return (
     <AppProvider value={app}>
-      <Stage width={window.screen.width} height={window.screen.width} options={{ backgroundColor: 0x000, opacity: 100 }}>
+      <Stage width={window.innerWidth} height={window.innerHeight} options={{ backgroundColor: 0x000, opacity: 100 }}>
         <LibraryScene />
         <PlayerSprite />
       </Stage>
