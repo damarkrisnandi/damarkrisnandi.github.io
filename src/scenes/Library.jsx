@@ -69,7 +69,7 @@ function LibraryScene() {
     useEffect(() => {
         blockBuilder(room.src, unit, room.tiles, center)
         colliderBuilder(room.src, unit, room.collider, center)
-        console.log(collidersRef)
+        
     }, [])
 
     useTick((delta) => {
