@@ -1,24 +1,33 @@
-import logo from './logo.svg';
+
 import './App.css';
+import * as PIXI from "pixi.js";
+import PlayerSprite from './players/Players';
+import { AppProvider, Stage } from '@pixi/react';
+import LibraryScene from './scenes/Library';
+
+
 
 function App() {
+  const app = new PIXI.Application({
+    width: window.screen.width,
+    height: window.screen.height,
+    backgroundColor: 'black'
+
+  });
+
+  // detect
+  window.globalThis.__PIXI_APP__ = app;
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppProvider value={app}>
+      <Stage width={window.screen.width} height={window.screen.width} options={{ backgroundColor: 0x000, opacity: 100 }}>
+        <LibraryScene />
+        <PlayerSprite />
+      </Stage>
+    </AppProvider>
+      
+      
+    
   );
 }
 
