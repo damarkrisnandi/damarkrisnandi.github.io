@@ -2,10 +2,8 @@ import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import room from '../json-helper/room.json'
+import { center, unit } from "../utils";
 
-const unit = 16;
-const width = window.innerWidth;
-const height = window.innerHeight;
 const movement = {
     up: {x: 0, y: -1},
     left: {x: -1, y: 0}, 
@@ -16,10 +14,6 @@ const movement = {
     down0: {x: 0, y: 0}, 
     right0: {x: 0, y: 0},
 }
-
-const maxY = Math.max(...room.tiles.map(t => t.nowy + 1))
-const maxX = Math.max(...room.tiles.map(t => t.nowx + 1))
-const center = {x: Math.floor(width/(2*unit)) - Math.floor(maxX/2), y: height/(2*unit) - Math.floor(maxY/2)}
 
 function LibraryScene() {
     const [sprites, setSprites] = useState([])
@@ -67,8 +61,8 @@ function LibraryScene() {
     }
 
     useEffect(() => {
-        blockBuilder(room.src, unit, room.tiles, center)
-        colliderBuilder(room.src, unit, room.collider, center)
+        blockBuilder(room.src, unit, room.tiles, center(room.tiles))
+        colliderBuilder(room.src, unit, room.collider, center(room.tiles))
         
     }, [])
 

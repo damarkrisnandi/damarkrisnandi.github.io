@@ -1,13 +1,7 @@
 import { Container, AnimatedSprite, useTick } from "@pixi/react";
 import * as PIXI from "pixi.js";
 import { useEffect, useRef, useState } from "react";
-// import AnimatedSprite from "../custom-components/AnimatedSprite";
-// import { Sprite, Stage } from "react-pixi-fiber/index.js";
-// import { Container } from "react-pixi-fiber";
-
-const unit = 16;
-const width = window.innerWidth;
-const height = window.innerHeight;
+import { unit, height, width } from "../utils";
 
 const standLeftFrames = [{x: 2, y: 2}]
 const walkLeftFrames = [

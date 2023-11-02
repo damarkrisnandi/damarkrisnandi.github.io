@@ -1,11 +1,9 @@
 import './wasd.css'
 import { Container, Text, Sprite } from "@pixi/react";
 import * as PIXI from "pixi.js";
+import { height, unit } from '../utils';
 
 
-const unit = 16;
-// const width = window.innerWidth;
-const height = window.innerHeight;
 const textStyle = new PIXI.TextStyle({
     align: 'center',
     fontFamily: '"Press Start 2P"',
