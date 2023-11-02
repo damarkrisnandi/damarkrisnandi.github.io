@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import PlayerSprite from './players/Players';
 import { AppProvider, Stage } from '@pixi/react';
 import LibraryScene from './scenes/Library';
+import WasdInfo from './info/wasd';
 
 
 
@@ -23,6 +24,8 @@ function App() {
       <Stage width={window.innerWidth} height={window.innerHeight} options={{ backgroundColor: 0x000, opacity: 100 }}>
         <LibraryScene />
         <PlayerSprite />
+
+        <WasdInfo />
       </Stage>
     </AppProvider>
       
