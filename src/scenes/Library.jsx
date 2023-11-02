@@ -1,6 +1,6 @@
 import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
-import * as PIXI from "pixi.js";
+
 import room from '../json-helper/room.json'
 import { blockBuilder, center, isObjectsOverlap, movement, unit } from "../utils";
 import PlayerSprite from "../players/Players";
@@ -60,7 +60,7 @@ function LibraryScene() {
             setColliders(blockBuilder(room.src, unit, room.collider, center(room.tiles)))
         }
         
-    }, [])
+    }, [sprites, colliders])
 
     useTick((delta) => {
         window.addEventListener('keydown', (event) => { 
