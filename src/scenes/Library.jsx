@@ -2,8 +2,9 @@ import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
 import room from '../json-helper/room.json'
-import { blockBuilder, center, isObjectsOverlap, movement, unit } from "../utils";
+import { blockBuilder, center, isObjectsOverlap, movement, textStyle, unit } from "../utils";
 import PlayerSprite from "../players/Players";
+import BookShelf from "../objects/bookshelf";
 
 function LibraryScene() {
     const [sprites, setSprites] = useState([])
@@ -13,44 +14,6 @@ function LibraryScene() {
     const containerRef = useRef();
     const collidersRef = useRef();
 
-    // const blockBuilder = (url, unit, source, destination) => {
-    //     const baseTexture = PIXI.BaseTexture.from(url)
-    
-    //     let textureTemp = [];
-    //     for (let position of source) {
-    //         const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
-    //         const texture1 = new PIXI.Texture(baseTexture, rect1);
-    //         const spr1 = new PIXI.Sprite(texture1);
-    //         spr1.x = (destination.x + position.nowx) * unit;
-    //         spr1.y = (destination.y + position.nowy) * unit;
-
-    //         textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
-            
-    //     }
-
-    //     setSprites(textureTemp)
-    
-    // }
-
-    // const colliderBuilder = (url, unit, source, destination) => {
-    //     const baseTexture = PIXI.BaseTexture.from(url)
-    
-    //     let textureTemp = [];
-    //     for (let position of source) {
-    //         const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
-    //         const texture1 = new PIXI.Texture(baseTexture, rect1);
-    //         const spr1 = new PIXI.Sprite(texture1);
-    //         spr1.x = (destination.x + position.nowx) * unit;
-    //         spr1.y = (destination.y + position.nowy) * unit;
-
-    //         textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
-            
-    //     }
-
-    //     setColliders(textureTemp)
-    
-    // }
-
     useEffect(() => {
         if (sprites.length === 0) {
             setSprites(blockBuilder(room.src, unit, room.tiles, center(room.tiles)))
@@ -59,6 +22,10 @@ function LibraryScene() {
         if (colliders.length === 0) {
             setColliders(blockBuilder(room.src, unit, room.collider, center(room.tiles)))
         }
+
+        setTimeout(() => {
+            console.log(containerRef.current.children.find(a => a.name === ('bookshelf-math')));
+        }, 3000)
         
     }, [sprites, colliders])
 
@@ -79,8 +46,24 @@ function LibraryScene() {
 
         if (containerRef.current && collidersRef.current) {
             const colliders = collidersRef.current.children.filter(ch => ch.isSprite)
-            const player = collidersRef.current.children.find(ch => ch.name === 'player')
-            const collides = colliders.map(coll => isObjectsOverlap(coll.getBounds(), player.getBounds(), movement[key]))
+            const player = containerRef.current.children.find(ch => ch.name === 'player')
+            
+            // objects
+            const mathBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-math'));
+            const biographBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-biograph'));
+            const literatureBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-literature'));
+            const historyBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-history'));
+            
+            const collides = 
+            [
+                ...colliders,
+                ...mathBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-math'),
+                ...biographBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-biograph'),
+                ...literatureBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-literature'),
+                ...historyBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-history'),
+            ]
+            .map(coll => isObjectsOverlap(coll.getBounds(), player.getBounds(), movement[key]))
+            
             if (!collides.includes(true)) {
                 containerRef.current.x -=  movement[key].x;
                 containerRef.current.y -=  movement[key].y;
@@ -90,6 +73,18 @@ function LibraryScene() {
                 containerRef.current.y +=  movement[key].y;
                 setPlayerMove(false)
             };
+
+            const interacts = 
+            [
+                ...mathBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-math'),
+                ...biographBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-biograph'),
+                ...literatureBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-literature'),
+                ...historyBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-history'),
+            ]
+            .map(interact => isObjectsOverlap(interact.getBounds(), player.getBounds(), movement[key]))
+            
+            if (interacts.includes(true)) {
+            }
         }
         
         
@@ -97,7 +92,7 @@ function LibraryScene() {
 
     if (sprites.length !== room.tiles.length) {
         return (<Container>
-            <Text text="load asset..." style={{'color': 'white'}}/>
+            <Text text="load asset..." style={textStyle}/>
         </Container>);
     }
 
@@ -106,12 +101,21 @@ function LibraryScene() {
             {sprites.map(sprite => (
                 <Sprite {...sprite} />
             ))}
+            {/* room objects puts here...  */}
+            <BookShelf name={'math'} position={{x: center(room.tiles).x, y: center(room.tiles).y}}/>
+            <BookShelf name={'literature'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y}}/>
+            <BookShelf name={'biograph'} position={{x: center(room.tiles).x, y: center(room.tiles).y + 3}}/>
+            <BookShelf name={'history'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y + 3}}/>
+            
+            {/* player puts here.. */}
+            <PlayerSprite playerMove={playerMove}/>
+            
             <Container ref={collidersRef} >
-                <PlayerSprite playerMove={playerMove}/>
                 {colliders.map(coll => (
                     <Sprite {...coll}/>
                 ))}
             </Container>
+            
         </Container>
     );
 }
