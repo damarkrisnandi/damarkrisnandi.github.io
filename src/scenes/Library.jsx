@@ -31,17 +31,17 @@ function LibraryScene() {
 
     useTick((delta) => {
         window.addEventListener('keydown', (event) => { 
-            if (event.key === 'd') { setKey('right'); }
-            if (event.key === 'a') { setKey('left'); }
-            if (event.key === 'w') { setKey('up'); }
-            if (event.key === 's') { setKey('down'); }
+            if (event.key === 'd') { playerMove && setKey('right'); }
+            if (event.key === 'a') { playerMove && setKey('left'); }
+            if (event.key === 'w') { playerMove && setKey('up'); }
+            if (event.key === 's') { playerMove && setKey('down'); }
         })
 
         window.addEventListener('keyup', (event) => { 
-            if (event.key === 'd') { setKey('right0'); }
-            if (event.key === 'a') { setKey('left0'); }
-            if (event.key === 'w') { setKey('up0'); }
-            if (event.key === 's') { setKey('down0'); }
+            if (event.key === 'd') { playerMove && setKey('right0'); }
+            if (event.key === 'a') { playerMove && setKey('left0'); }
+            if (event.key === 'w') { playerMove && setKey('up0'); }
+            if (event.key === 's') { playerMove && setKey('down0'); }
         })
 
         if (containerRef.current && collidersRef.current) {
@@ -69,8 +69,8 @@ function LibraryScene() {
                 containerRef.current.y -=  movement[key].y;
                 setPlayerMove(true);
             } else {
-                containerRef.current.x +=  movement[key].x;
-                containerRef.current.y +=  movement[key].y;
+                // containerRef.current.x +=  movement[key].x;
+                // containerRef.current.y +=  movement[key].y;
                 setPlayerMove(false)
             };
 

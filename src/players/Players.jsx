@@ -50,10 +50,10 @@ function PlayerSprite(props) {
         })
 
         window.addEventListener('keyup', (event) => { 
-            if (event.key === 'd') { setKey('right0'); }
-            if (event.key === 'a') { setKey('left0'); }
-            if (event.key === 'w') { setKey('up0'); }
-            if (event.key === 's') { setKey('down0'); }
+            if (event.key === 'd') { props.playerMove && setKey('right0'); }
+            if (event.key === 'a') { props.playerMove && setKey('left0'); }
+            if (event.key === 'w') { props.playerMove && setKey('up0'); }
+            if (event.key === 's') { props.playerMove && setKey('down0'); }
 
         })
 
@@ -62,8 +62,8 @@ function PlayerSprite(props) {
                 containerRef.current.x += movement[key].x;
                 containerRef.current.y += movement[key].y;
             } else {
-                containerRef.current.x -= movement[key].x;
-                containerRef.current.y -= movement[key].y;
+                // containerRef.current.x -= movement[key].x;
+                // containerRef.current.y -= movement[key].y;
             }
         }
         
