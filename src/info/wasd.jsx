@@ -4,7 +4,7 @@ import * as PIXI from "pixi.js";
 
 
 const unit = 16;
-const width = window.innerWidth;
+// const width = window.innerWidth;
 const height = window.innerHeight;
 const textStyle = new PIXI.TextStyle({
     align: 'center',
