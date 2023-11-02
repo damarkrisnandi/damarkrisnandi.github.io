@@ -7,7 +7,7 @@ import { height, unit } from '../utils';
 const textStyle = new PIXI.TextStyle({
     align: 'center',
     fontFamily: '"Press Start 2P"',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '200',
     fill: ['#ffffff'], // gradient
     // stroke: '#01d27e',
@@ -29,7 +29,7 @@ function WasdInfo() {
         text="Use"
         anchor={0}
         x={0}
-        y={unit / 4}
+        y={unit / 2}
         style={textStyle} />
 
         <Sprite 
@@ -41,7 +41,7 @@ function WasdInfo() {
         text="to Move"
         anchor={0}
         x={unit * 9}
-        y={unit / 4}
+        y={unit / 2}
         style={textStyle}
     />
     </Container> 

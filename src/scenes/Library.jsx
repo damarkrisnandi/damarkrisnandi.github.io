@@ -2,76 +2,72 @@ import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import room from '../json-helper/room.json'
-import { center, unit } from "../utils";
-
-const movement = {
-    up: {x: 0, y: -1},
-    left: {x: -1, y: 0}, 
-    down: {x: 0, y: 1}, 
-    right: {x: 1, y: 0},
-    up0: {x: 0, y: 0},
-    left0: {x: 0, y: 0}, 
-    down0: {x: 0, y: 0}, 
-    right0: {x: 0, y: 0},
-}
+import { blockBuilder, center, isObjectsOverlap, movement, unit } from "../utils";
+import PlayerSprite from "../players/Players";
 
 function LibraryScene() {
     const [sprites, setSprites] = useState([])
     const [colliders, setColliders] = useState([])
     const [key, setKey] = useState('down0');
+    const [playerMove, setPlayerMove] = useState(false);
     const containerRef = useRef();
     const collidersRef = useRef();
 
-    const blockBuilder = (url, unit, source, destination) => {
-        const baseTexture = PIXI.BaseTexture.from(url)
+    // const blockBuilder = (url, unit, source, destination) => {
+    //     const baseTexture = PIXI.BaseTexture.from(url)
     
-        let textureTemp = [];
-        for (let position of source) {
-            const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
-            const texture1 = new PIXI.Texture(baseTexture, rect1);
-            const spr1 = new PIXI.Sprite(texture1);
-            spr1.x = (destination.x + position.nowx) * unit;
-            spr1.y = (destination.y + position.nowy) * unit;
-            // sprites.push(spr1)
-            textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
+    //     let textureTemp = [];
+    //     for (let position of source) {
+    //         const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
+    //         const texture1 = new PIXI.Texture(baseTexture, rect1);
+    //         const spr1 = new PIXI.Sprite(texture1);
+    //         spr1.x = (destination.x + position.nowx) * unit;
+    //         spr1.y = (destination.y + position.nowy) * unit;
+
+    //         textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
             
-        }
+    //     }
 
-        setSprites(textureTemp)
+    //     setSprites(textureTemp)
     
-    }
+    // }
 
-    const colliderBuilder = (url, unit, source, destination) => {
-        const baseTexture = PIXI.BaseTexture.from(url)
+    // const colliderBuilder = (url, unit, source, destination) => {
+    //     const baseTexture = PIXI.BaseTexture.from(url)
     
-        let textureTemp = [];
-        for (let position of source) {
-            const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
-            const texture1 = new PIXI.Texture(baseTexture, rect1);
-            const spr1 = new PIXI.Sprite(texture1);
-            spr1.x = (destination.x + position.nowx) * unit;
-            spr1.y = (destination.y + position.nowy) * unit;
-            // sprites.push(spr1)
-            textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
+    //     let textureTemp = [];
+    //     for (let position of source) {
+    //         const rect1 = new PIXI.Rectangle((position.x - 1) * unit, (position.y - 1) * unit, unit, unit)
+    //         const texture1 = new PIXI.Texture(baseTexture, rect1);
+    //         const spr1 = new PIXI.Sprite(texture1);
+    //         spr1.x = (destination.x + position.nowx) * unit;
+    //         spr1.y = (destination.y + position.nowy) * unit;
+
+    //         textureTemp.push({texture: texture1, x: spr1.x, y: spr1.y});
             
-        }
+    //     }
 
-        setColliders(textureTemp)
+    //     setColliders(textureTemp)
     
-    }
+    // }
 
     useEffect(() => {
-        blockBuilder(room.src, unit, room.tiles, center(room.tiles))
-        colliderBuilder(room.src, unit, room.collider, center(room.tiles))
+        if (sprites.length === 0) {
+            setSprites(blockBuilder(room.src, unit, room.tiles, center(room.tiles)))
+        }
+        
+        if (colliders.length === 0) {
+            setColliders(blockBuilder(room.src, unit, room.collider, center(room.tiles)))
+        }
         
     }, [])
 
     useTick((delta) => {
         window.addEventListener('keydown', (event) => { 
-            if (event.key === 'd') { key !== 'right' && setKey('right'); }
-            if (event.key === 'a') { key !== 'left' && setKey('left'); }
-            if (event.key === 'w') { key !== 'up' && setKey('up'); }
-            if (event.key === 's') { key !== 'down' && setKey('down'); }
+            if (event.key === 'd') { setKey('right'); }
+            if (event.key === 'a') { setKey('left'); }
+            if (event.key === 'w') { setKey('up'); }
+            if (event.key === 's') { setKey('down'); }
         })
 
         window.addEventListener('keyup', (event) => { 
@@ -82,8 +78,18 @@ function LibraryScene() {
         })
 
         if (containerRef.current && collidersRef.current) {
-            containerRef.current.x -=  movement[key].x * delta;
-            containerRef.current.y -=  movement[key].y * delta;
+            const colliders = collidersRef.current.children.filter(ch => ch.isSprite)
+            const player = collidersRef.current.children.find(ch => ch.name === 'player')
+            const collides = colliders.map(coll => isObjectsOverlap(coll.getBounds(), player.getBounds(), movement[key]))
+            if (!collides.includes(true)) {
+                containerRef.current.x -=  movement[key].x;
+                containerRef.current.y -=  movement[key].y;
+                setPlayerMove(true);
+            } else {
+                containerRef.current.x +=  movement[key].x;
+                containerRef.current.y +=  movement[key].y;
+                setPlayerMove(false)
+            };
         }
         
         
@@ -101,6 +107,7 @@ function LibraryScene() {
                 <Sprite {...sprite} />
             ))}
             <Container ref={collidersRef} >
+                <PlayerSprite playerMove={playerMove}/>
                 {colliders.map(coll => (
                     <Sprite {...coll}/>
                 ))}
