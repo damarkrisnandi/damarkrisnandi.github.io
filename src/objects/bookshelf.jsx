@@ -1,7 +1,7 @@
-import { Container, Sprite, useTick } from "@pixi/react";
+import { useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 import bookshelf from '../json-helper/book-shelf.json'
-import { blockBuilder, center, unit } from "../utils";
+import { blockBuilder, unit } from "../utils";
 import ObjectBuilder from "./ObjectBuilder";
 
 function BookShelf(props) {
@@ -10,10 +10,8 @@ function BookShelf(props) {
     const [colliders, setColliders] = useState([]);
     const [interacts, setInteracts] = useState([]);
     const containerRef = useRef();
-    const collidersRef = useRef();
 
     useEffect(() => {
-        const centerplace = center(bookshelf.tiles);
         
         if (sprites.length === 0) {
             setSprites(blockBuilder(bookshelf.src, unit, bookshelf.tiles, position))
@@ -27,9 +25,9 @@ function BookShelf(props) {
             setInteracts(blockBuilder(bookshelf.src, unit, bookshelf.interactZone, position))
         }
 
-    }, [sprites, colliders, position])
+    }, [sprites, colliders, interacts, position])
 
-    useTick((delta) => {
+    useTick(() => {
 
     })
 

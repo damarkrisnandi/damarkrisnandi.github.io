@@ -1,26 +1,7 @@
 import './wasd.css'
 import { Container, Text, Sprite } from "@pixi/react";
-import * as PIXI from "pixi.js";
-import { height, unit } from '../utils';
+import { height, textStyle, unit } from '../utils';
 
-
-const textStyle = new PIXI.TextStyle({
-    align: 'center',
-    fontFamily: '"Press Start 2P"',
-    fontSize: 12,
-    fontWeight: '200',
-    fill: ['#ffffff'], // gradient
-    // stroke: '#01d27e',
-    strokeThickness: 2,
-    letterSpacing: 10,
-    dropShadow: true,
-    // dropShadowColor: '#ccced2',
-    dropShadowBlur: 0,
-    dropShadowAngle: Math.PI / 6,
-    dropShadowDistance: 6,
-    wordWrap: true,
-    wordWrapWidth: 440,
-});
 
 function WasdInfo() {
     return ( 
