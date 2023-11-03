@@ -59,11 +59,9 @@ function PlayerSprite(props) {
 
         if (containerRef.current) {
             if (props.playerMove) {
-                containerRef.current.x += movement[key].x;
-                containerRef.current.y += movement[key].y;
+                containerRef.current.x += movement[key].x * 2;
+                containerRef.current.y += movement[key].y * 2;
             } else {
-                // containerRef.current.x -= movement[key].x;
-                // containerRef.current.y -= movement[key].y;
             }
         }
         

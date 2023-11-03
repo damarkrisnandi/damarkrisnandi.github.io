@@ -2,7 +2,7 @@ import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
 import room from '../json-helper/room.json'
-import { blockBuilder, center, height, isObjectsOverlap, movement, textStyle, textStyleSm, unit } from "../utils";
+import { blockBuilder, center, height, isObjectsOverlap, movement, textStyle, textStyleSm, unit, width } from "../utils";
 import PlayerSprite from "../players/Players";
 import BookShelf from "../objects/bookshelf";
 
@@ -10,10 +10,23 @@ function LibraryScene() {
     const [sprites, setSprites] = useState([])
     const [colliders, setColliders] = useState([])
     const [key, setKey] = useState('down0');
-    const [interactMsg, setInteractMsg] = useState('');
+    const [interactMsg, setInteractMsg] = useState('walk to bookshelves to get all informations');
     const [playerMove, setPlayerMove] = useState(false);
     const containerRef = useRef();
     const collidersRef = useRef();
+
+    const current = new Date().getFullYear()
+    const bookshelves = [
+        { name: 'createdby', position:{x: center(room.tiles).x, y: center(room.tiles).y}, interactMessage: 'created by: damarkrisnandi as frontend-developer'},
+        { name: 'tech stacks', position:{x: center(room.tiles).x + 3, y: center(room.tiles).y}, interactMessage: 'tech-stacks: angular, react, vuejs, java, nodejs'},
+        { name: 'projects', position:{x: center(room.tiles).x + 6, y: center(room.tiles).y}, interactMessage: `projects: sakti-frontend-web (angular) 2019-${current} \n bca-bds-webgen-2 (angular) 2021 \n sakti-web-micro-frontend (webpack&angular) 2022-${current}`},
+        { name: 'education', position:{x: center(room.tiles).x + 9, y: center(room.tiles).y}, interactMessage: `educations: 2013-2019 math univ gadjah mada, 2018 binar academy yogyakarta`},
+
+        { name: 'framework', position:{x: center(room.tiles).x + 6, y: center(room.tiles).y + 5}, interactMessage: `create-this-with: react, pixijs, react-pixijs`},
+
+        { name: 'assets', position:{x: center(room.tiles).x + 9, y: center(room.tiles).y + 5}, interactMessage: 
+        `this-page-assets: https://opengameart.org/content/classic-rpg-tileset, https://limezu.itch.io/moderninteriors/devlog/207713/free-version-overview`},
+    ]
 
     useEffect(() => {
         if (sprites.length === 0) {
@@ -23,10 +36,6 @@ function LibraryScene() {
         if (colliders.length === 0) {
             setColliders(blockBuilder(room.src, unit, room.collider, center(room.tiles)))
         }
-
-        setTimeout(() => {
-            console.log(containerRef.current.children.find(a => a.name === ('bookshelf-math')));
-        }, 3000)
         
     }, [sprites, colliders])
 
@@ -50,36 +59,36 @@ function LibraryScene() {
             const player = containerRef.current.children.find(ch => ch.name === 'player')
             
             // objects
-            const mathBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-math'));
-            const biographBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-biograph'));
-            const literatureBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-literature'));
-            const historyBookShelf = containerRef.current.children.find(a => a.name === ('bookshelf-history'));
+            const bookshelfChildren = bookshelves.map(b => containerRef.current.children.find(a => a.name === (`bookshelf-${b.name}`)))
             
+            const objectColliders = [];
+            bookshelfChildren.forEach(bs => {
+                const colliders = bs.children.filter(ch => ch.name && ch.name.startsWith('coll-'))
+                
+                objectColliders.push(...colliders)
+            })
             const collides = 
             [
                 ...colliders,
-                ...mathBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-math'),
-                ...biographBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-biograph'),
-                ...literatureBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-literature'),
-                ...historyBookShelf.children.filter(ch => ch.name === 'coll-bookshelf-history'),
+                ...objectColliders
             ]
             .map(coll => isObjectsOverlap(coll.getBounds(), player.getBounds(), movement[key]))
             
             if (!collides.includes(true)) {
-                containerRef.current.x -=  movement[key].x;
-                containerRef.current.y -=  movement[key].y;
+                containerRef.current.x -=  movement[key].x * 2;
+                containerRef.current.y -=  movement[key].y * 2;
                 setPlayerMove(true);
             } else {
-                // containerRef.current.x +=  movement[key].x;
-                // containerRef.current.y +=  movement[key].y;
                 setPlayerMove(false)
             };
 
+            const objectInteract = [];
+            bookshelfChildren.forEach(bs => {
+                const interacts = bs.children.filter(ch => ch.name && ch.name.startsWith('interact-'))
+                objectInteract.push(...interacts)
+            })
             const objectsChildren = [
-                ...mathBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-math'),
-                ...biographBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-biograph'),
-                ...literatureBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-literature'),
-                ...historyBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-history'),
+                ...objectInteract
             ];
             
             const interacts = objectsChildren.map(interact => 
@@ -94,7 +103,7 @@ function LibraryScene() {
                 const idx = interacts.findIndex(i => i === true);
                 setInteractMsg(objectsChildren[idx].message)
             } else {
-                setInteractMsg('');
+                // setInteractMsg('');
             }
         }
         
@@ -109,14 +118,22 @@ function LibraryScene() {
 
     return ( 
         <Container ref={containerRef} anchor={0.5}>
+            <Text
+            text={"damarkrisnandi's portofolio"}
+            anchor={0.5}
+            x={(width / 2)}
+            y={(height / 2) - (unit * 8) }
+            style={textStyle} />
             {sprites.map(sprite => (
                 <Sprite {...sprite} />
             ))}
             {/* room objects puts here...  */}
-            <BookShelf name={'math'} position={{x: center(room.tiles).x, y: center(room.tiles).y}}/>
-            <BookShelf name={'literature'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y}}/>
+            {bookshelves.map(b => (
+                <BookShelf name={b.name} position={b.position} interactMessage={b.interactMessage}/>
+            ))}
+            {/* <BookShelf name={'literature'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y}}/>
             <BookShelf name={'biograph'} position={{x: center(room.tiles).x, y: center(room.tiles).y + 3}}/>
-            <BookShelf name={'history'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y + 3}}/>
+            <BookShelf name={'history'} position={{x: center(room.tiles).x + 3, y: center(room.tiles).y + 3}}/> */}
             
             {/* player puts here.. */}
             <PlayerSprite playerMove={playerMove}/>

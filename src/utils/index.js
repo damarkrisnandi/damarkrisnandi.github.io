@@ -112,7 +112,7 @@ export const textStyle = new PIXI.TextStyle({
 });
 
 export const textStyleSm = new PIXI.TextStyle({
-    align: 'center',
+    align: 'left',
     fontFamily: '"Press Start 2P"',
     fontSize: 10,
     fontWeight: '100',
@@ -126,6 +126,6 @@ export const textStyleSm = new PIXI.TextStyle({
     dropShadowAngle: Math.PI / 6,
     dropShadowDistance: 4,
     wordWrap: true,
-    wordWrapWidth: unit * 5,
+    wordWrapWidth: unit * 10,
     
 });

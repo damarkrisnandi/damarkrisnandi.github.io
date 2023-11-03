@@ -5,7 +5,7 @@ import { blockBuilder, unit } from "../utils";
 import ObjectBuilder from "./ObjectBuilder";
 
 function BookShelf(props) {
-    const {name, position} = props;
+    const {name, position, interactMessage} = props;
     const [sprites, setSprites] = useState([]);
     const [colliders, setColliders] = useState([]);
     const [interacts, setInteracts] = useState([]);
@@ -32,7 +32,7 @@ function BookShelf(props) {
     })
 
     return ( 
-        <ObjectBuilder {...{name: `bookshelf-${name}`,sprites, colliders, interacts, containerRef}} />
+        <ObjectBuilder {...{name: `bookshelf-${name}`,sprites, colliders, interacts, containerRef, interactMessage}} />
     );
 }
 
