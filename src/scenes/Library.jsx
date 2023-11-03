@@ -2,7 +2,7 @@ import { Container, Sprite, Text, useTick } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
 import room from '../json-helper/room.json'
-import { blockBuilder, center, isObjectsOverlap, movement, textStyle, unit } from "../utils";
+import { blockBuilder, center, height, isObjectsOverlap, movement, textStyle, textStyleSm, unit } from "../utils";
 import PlayerSprite from "../players/Players";
 import BookShelf from "../objects/bookshelf";
 
@@ -10,6 +10,7 @@ function LibraryScene() {
     const [sprites, setSprites] = useState([])
     const [colliders, setColliders] = useState([])
     const [key, setKey] = useState('down0');
+    const [interactMsg, setInteractMsg] = useState('');
     const [playerMove, setPlayerMove] = useState(false);
     const containerRef = useRef();
     const collidersRef = useRef();
@@ -74,16 +75,26 @@ function LibraryScene() {
                 setPlayerMove(false)
             };
 
-            const interacts = 
-            [
+            const objectsChildren = [
                 ...mathBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-math'),
                 ...biographBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-biograph'),
                 ...literatureBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-literature'),
                 ...historyBookShelf.children.filter(ch => ch.name === 'interact-bookshelf-history'),
-            ]
-            .map(interact => isObjectsOverlap(interact.getBounds(), player.getBounds(), movement[key]))
+            ];
+            
+            const interacts = objectsChildren.map(interact => 
+                isObjectsOverlap(
+                    interact.getBounds(), 
+                    player.getBounds(), 
+                    movement[key]
+                )
+            )
             
             if (interacts.includes(true)) {
+                const idx = interacts.findIndex(i => i === true);
+                setInteractMsg(objectsChildren[idx].message)
+            } else {
+                setInteractMsg('');
             }
         }
         
@@ -109,6 +120,16 @@ function LibraryScene() {
             
             {/* player puts here.. */}
             <PlayerSprite playerMove={playerMove}/>
+
+                {interactMsg ? (
+                    <Text
+                    text={interactMsg}
+                    anchor={0}
+                    x={(unit * 10)}
+                    y={height / 2}
+                    style={textStyleSm} />
+
+                ) : null}
             
             <Container ref={collidersRef} >
                 {colliders.map(coll => (
