@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import { AppProvider, Stage } from '@pixi/react';
 import LibraryScene from './scenes/Library';
 import WasdInfo from './info/wasd';
+import TimeInfo from './info/TimeInfo';
 
 
 
@@ -24,6 +25,7 @@ function App() {
         <LibraryScene />
 
         <WasdInfo />
+        <TimeInfo />
       </Stage>
     </AppProvider>
       
