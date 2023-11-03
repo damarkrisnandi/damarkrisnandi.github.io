@@ -20,7 +20,7 @@ function LibraryScene() {
         { name: 'createdby', position:{x: center(room.tiles).x, y: center(room.tiles).y}, interactMessage: 'created by: damarkrisnandi as frontend-developer'},
         { name: 'tech stacks', position:{x: center(room.tiles).x + 3, y: center(room.tiles).y}, interactMessage: 'tech-stacks: angular, react, vuejs, java, nodejs'},
         { name: 'projects', position:{x: center(room.tiles).x + 6, y: center(room.tiles).y}, interactMessage: `projects: sakti-frontend-web (angular) 2019-${current} \n bca-bds-webgen-2 (angular) 2021 \n sakti-web-micro-frontend (webpack&angular) 2022-${current}`},
-        { name: 'education', position:{x: center(room.tiles).x + 9, y: center(room.tiles).y}, interactMessage: `educations: 2013-2019 math univ gadjah mada, 2018 binar academy yogyakarta`},
+        { name: 'education', position:{x: center(room.tiles).x + 9, y: center(room.tiles).y}, interactMessage: `educations: 2013-2019 math univ gadjah mada,\n2018 binar academy yogyakarta`},
 
         { name: 'framework', position:{x: center(room.tiles).x + 6, y: center(room.tiles).y + 5}, interactMessage: `create-this-with: react, pixijs, react-pixijs`},
 
