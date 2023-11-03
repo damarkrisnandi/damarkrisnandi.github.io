@@ -72,7 +72,13 @@ function LibraryScene() {
                 ...colliders,
                 ...objectColliders
             ]
-            .map(coll => isObjectsOverlap(coll.getBounds(), player.getBounds(), movement[key]))
+            .map(coll => 
+                isObjectsOverlap(
+                    coll.getBounds(), 
+                    player.getBounds(), 
+                    {x: movement[key].x * 2, y: movement[key].y * 2}
+                )
+            )
             
             if (!collides.includes(true)) {
                 containerRef.current.x -=  movement[key].x * 2;
@@ -95,7 +101,7 @@ function LibraryScene() {
                 isObjectsOverlap(
                     interact.getBounds(), 
                     player.getBounds(), 
-                    movement[key]
+                    {x: movement[key].x * 2, y: movement[key].y * 2}
                 )
             )
             
